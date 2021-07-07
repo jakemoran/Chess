@@ -21,8 +21,6 @@ class Position:
 
     # Define the position at the start of the game using a FEN string
     STARTING_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'
-    #STARTING_POSITION = '1n1qkbnr/1bpppppp/1p6/r3PK2/8/p7/PPPP1PPP/RNBQ1BNR'
-    #STARTING_POSITION = '8/8/8/8/8/3k4/8/3K4'
 
     def __init__(self, position_id=STARTING_POSITION, lastmove=0, load_images=True):
         self.position_id = position_id
