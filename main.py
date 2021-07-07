@@ -237,9 +237,9 @@ def main():
                                 print('Draw by stalemate!')
                                 game_over = True
 
-                        # if game_position.drawByInsufficient():
-                        #     print('Draw by insufficient material!')
-                        #     game_over = True
+                        if game_position.drawByInsufficient():
+                            print('Draw by insufficient material!')
+                            game_over = True
 
                         if game_position.drawByRepetition(fen_strings):
                             print('Draw by Repetition!')
