@@ -78,15 +78,6 @@ def get_letter_coords(index):
 
     return(file+rank)
 
-def positionGenerator(position, depth, color, white_turn):
-    if depth == 1:
-        return 1
-
-    moves = position.get_all_legal_moves(color, [], white_turn)
-    if color == 'white':
-        for move in moves:
-            position.move_piece()
-
 def main():
 
     run = True
