@@ -84,8 +84,10 @@ def main():
     clock = pg.time.Clock()
     dragging = False
     white_turn = True
-    debug = False
     game_over = False
+    
+    # When debug is set to true, useful information is printed every time a move is made
+    debug = False
 
     # Initialize starting position, position array, and list of moves
     game_position = Position()
@@ -93,9 +95,6 @@ def main():
     moves = []
     fen_strings = [game_position.toFen()]
     moves_since_last_capture = 0
-
-    if debug:
-        print(position_array)
 
     while run:
         clock.tick(FPS)
@@ -108,7 +107,7 @@ def main():
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if not game_over:
 
-                    # Get information about what was clicked on
+                    # Get information about what square was clicked on
                     click = pg.mouse.get_pos()
                     click_ind = get_index(click)
                     click_coords = get_nearest_square(click)
@@ -118,7 +117,7 @@ def main():
                         print(click, get_index(click), get_nearest_square(click))
                         print(position_array[get_index(click)[0]][get_index(click)[1]])
 
-                    # If it is a piece that can be moved, start dragging and calculate
+                    # If the square contains a piece that can be moved, start dragging and calculate
                     # the legal moves
                     if (click_square.get_color() == 'white' and white_turn) \
                         or (click_square.get_color() == 'black' and not white_turn):
@@ -141,13 +140,16 @@ def main():
                     # Determine if the target square is a legal move
                     if target_ind in legal_moves:
 
+                        # Determine if the move is a capture or not, and if so store what type of
+                        # piece was captured
                         capture = position_array[target_ind[0]][target_ind[1]].isOccupied()
                         captured_piece = position_array[target_ind[0]][target_ind[1]].get_piece()
+                        
                         en_passant = False
                         short_castle = False
                         long_castle = False
 
-                        # If so update the target location with the piece that moved to it
+                        # Update the target location with the piece that moved to it
                         position_array[target_ind[0]][target_ind[1]] = \
                             Square(target_coords, click_square.get_piece(), click_square.get_color())
 
@@ -176,6 +178,7 @@ def main():
                             elif this_move.get_color() == 'black':
                                 game_position.set_king_pos('black', target_ind)
 
+                        # If a pawn reaches the opposite side of the board, promote it to a queen
                         if this_move.get_piece() == 'pawn' and \
                             (this_move.get_target()[1] == 0 or this_move.get_target()[1] == 7):
 
@@ -183,14 +186,17 @@ def main():
                             position_array[target_ind[0]][target_ind[1]].set_image(
                                 pg.image.load(os.path.join('Assets', f'{this_move.get_color()}queen.png')))
 
+                        # Extra logic to deal with en passant
                         if game_position.en_passant(moves):
                             capture = True
                             en_passant = True
                             position_array[moves[-2].get_target()[0]][moves[-2].get_target()[1]] = \
                                 Square(get_letter_coords(moves[-2].get_target()))
 
+                        # Add more information to the move for reference
                         this_move.setMoveType(en_passant, short_castle, long_castle)
 
+                        # Play sounds
                         if capture:
                             capture_sound = mixer.Sound(os.path.join('Assets', 'capture_piece.ogg'))
                             capture_sound.play()
@@ -200,6 +206,7 @@ def main():
                             move_sound.play()
                             moves_since_last_capture += 1
 
+                        # Change the turn
                         if white_turn:
                             white_turn = False
                             check_color = 'black'
@@ -207,16 +214,20 @@ def main():
                             white_turn = True
                             check_color = 'white'
 
-                        # Look for checks/checkmate/stalemate
+                        # Look for checks/checkmate/stalemate by seeing how many moves the color that
+                        # is about to play has. If there are no moves and it is not in check, it is
+                        # a stalemate, if there are no moves and it is in check, it is checkmate
                         number_of_moves = len(game_position.get_all_legal_moves(check_color,
                                                                                 moves, white_turn))
+                        
+                        # Store the new position as a fen string for reference
                         fen_strings.append(game_position.toFen())
 
                         if debug:
                             print(this_move)
                             print(fen_strings[-1])
 
-                        if game_position.newInCheck(check_color):
+                        if game_position.InCheck(check_color):
                             if number_of_moves == 0:
                                 print('Checkmate!')
                                 game_over = True
@@ -227,6 +238,7 @@ def main():
                                 print('Draw by stalemate!')
                                 game_over = True
 
+                        # Evaluate if the game is a draw
                         if game_position.drawByInsufficient():
                             print('Draw by insufficient material!')
                             game_over = True
