@@ -18,7 +18,7 @@ HIGHLIGHT = (0, 0, 0, 128)
 LASTMOVE_COLOR = (255, 255, 0, 64)
 BACKGROUND_COLOR = (0, 0, 0)
 
-FPS = 120
+FPS = 60
 
 letters = {0:'a', 1:'b', 2:'c',
                    3:'d', 4:'e', 5:'f', 6:'g', 7:'h'}
@@ -93,8 +93,7 @@ def main():
     clock = pg.time.Clock()
     dragging = False
     white_turn = True
-    timing = False
-    debug = True
+    debug = False
     game_over = False
 
     # Initialize starting position, position array, and list of moves
@@ -253,17 +252,6 @@ def main():
                     else:
                         position_array[click_ind[0]][click_ind[1]] = click_square
                     dragging = False
-
-                if timing:
-                    start = time.time()
-                    for i in range(0, 1):
-                        if white_turn:
-                            test = game_position.get_all_legal_moves('white',
-                                                                     moves, white_turn)
-                        else:
-                            test = game_position.get_all_legal_moves('black',
-                                                                     moves, white_turn)
-                    print(time.time() - start)
 
 
         # Update the position and draw the blank board
