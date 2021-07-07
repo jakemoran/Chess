@@ -276,7 +276,7 @@ class Position:
                     self.current[index[0]+direction][3] = \
                         Square(get_letter_coords((index[0]+direction, 3)))
 
-                    if not self.newInCheck('white'):
+                    if not self.inCheck('white'):
                         legal_moves.append((moves[-1].get_target()[0], moves[-1].get_target()[1] - 1))
 
                     self.current[index[0] + direction][3] = \
@@ -309,7 +309,7 @@ class Position:
                         self.current[index[0]+direction][4] = \
                             Square(get_letter_coords((index[0]+direction, 4)))
 
-                        if not self.newInCheck('black'):
+                        if not self.inCheck('black'):
                             legal_moves.append((moves[-1].get_target()[0], moves[-1].get_target()[1] + 1))
 
                         self.current[index[0] + direction][4] = \
@@ -512,12 +512,12 @@ class Position:
                         and not self.current[index[0] - 1][index[1]].isOccupied() \
                         and not self.current[index[0] - 2][index[1]].isOccupied() \
                         and not self.current[index[0] - 3][index[1]].isOccupied() \
-                        and not self.newInCheck(color):
+                        and not self.inCheck(color):
 
                     self.move_piece(self.current[index[0]][index[1]],
                                     self.current[index[0] - 1][index[1]])
 
-                    if not self.newInCheck(color):
+                    if not self.inCheck(color):
                         legal_moves.append((index[0] - 2, index[1]))
 
                     self.move_piece(self.current[index[0] - 1][index[1]],
@@ -526,12 +526,12 @@ class Position:
                 if self.can_castle(white_turn, moves)[1] \
                         and not self.current[index[0] + 1][index[1]].isOccupied() \
                         and not self.current[index[0] + 2][index[1]].isOccupied() \
-                        and not self.newInCheck(color):
+                        and not self.inCheck(color):
 
                     self.move_piece(self.current[index[0]][index[1]],
                                     self.current[index[0] + 1][index[1]])
 
-                    if not self.newInCheck(color):
+                    if not self.inCheck(color):
                         legal_moves.append((index[0] + 2, index[1]))
 
                     self.move_piece(self.current[index[0] + 1][index[1]],
@@ -545,7 +545,7 @@ class Position:
 
                 self.move_piece(self.current[index[0]][index[1]], self.current[move[0]][move[1]])
 
-                if self.newInCheck(color):
+                if self.inCheck(color):
                     legal_moves.remove(move)
 
                 self.move_piece(self.current[move[0]][move[1]], self.current[index[0]][index[1]])
@@ -553,7 +553,7 @@ class Position:
 
         return(legal_moves)
 
-    def newInCheck(self, color):
+    def inCheck(self, color):
 
         king_index = self.get_king_pos(color)
 
