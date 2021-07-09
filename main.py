@@ -1,7 +1,5 @@
 import pygame as pg
 import math
-import timeit
-import time
 import os
 
 from pieces import Square, Move
