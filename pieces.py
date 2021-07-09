@@ -1,7 +1,6 @@
 import pygame as pg
 import os
 import math
-import time
 import numpy as np
 
 BOARD_WIDTH, BOARD_HEIGHT = 640, 640
